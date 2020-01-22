@@ -39,5 +39,12 @@ public class MyClassesClass {
 
     public void setAsstotal(String asstotal) {
         this.asstotal = asstotal;
+
+    }
+    public void clearClasses()
+    {
+        coursename=null;
+        assignment=null;
+        asstotal=null;
     }
 }
