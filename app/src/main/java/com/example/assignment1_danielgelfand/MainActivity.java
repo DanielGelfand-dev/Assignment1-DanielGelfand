@@ -20,12 +20,10 @@ public class MainActivity extends AppCompatActivity {
     protected Button button_name, button_grades;
     private static final String TAG = "MainActivity";
 
-
+    protected SharedPreferenceHelper sharedPreferenceHelper;
 
 
     // String user_name = user_info.getString(getString(R.string.user_name),null);
-
-
 
 
     @Override
@@ -60,23 +58,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.user_name), Context.MODE_PRIVATE);
-        String name = sharedPreferences.getString(getString(R.string.user_name),null);
-        if(name==null)
-        {
+sharedPreferenceHelper =new SharedPreferenceHelper(this);
+        String name =sharedPreferenceHelper.getProfileName();
+        if (name == null) {
             goToProfile();
         }
 
@@ -99,17 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected void clearData()
-    {
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.user_name), Context.MODE_PRIVATE);
-        SharedPreferences.Editor myEdit = sharedPreferences.edit();
-        myEdit.putString(getString(R.string.user_name), null);
-        myEdit.putString(getString(R.string.user_age), null);
-        myEdit.putString(getString(R.string.user_id), null);
-        myEdit.apply();
+    protected void clearData() {
+       sharedPreferenceHelper = new SharedPreferenceHelper(this);
+        sharedPreferenceHelper.saveProfileName(null);
+        sharedPreferenceHelper.saveProfileID("");
+        sharedPreferenceHelper.saveProfileAge("");
 
     }
-
 
 
 }

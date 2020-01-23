@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ public class profileActivity extends AppCompatActivity {
     protected EditText textedit_age;
     protected EditText textedit_id;
     protected Button button_save;
+    protected SharedPreferenceHelper sharedPreferenceHelper;
 
 
     @Override
@@ -33,28 +35,45 @@ public class profileActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar); // set our toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupUI();
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
 
 
         button_save.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
+
                 String name = textedit_name.getText().toString(); // get the name textbar's contents
                 String age = textedit_age.getText().toString();
                 String id = textedit_id.getText().toString();
+                if ((TextUtils.isEmpty(textedit_name.getText().toString())) |
+                        (TextUtils.isEmpty(textedit_id.getText().toString()))|
+                (TextUtils.isEmpty(textedit_age.getText().toString())))
+                {
+                    Toast.makeText(profileActivity.this, "No Empty Fields Allowed", Toast.LENGTH_LONG).show();
 
-                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.user_name), Context.MODE_PRIVATE);
-                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.putString(getString(R.string.user_name), name);
-                myEdit.putString(getString(R.string.user_age), age.toString());
-                myEdit.putString(getString(R.string.user_id), id.toString());
-                myEdit.apply();
 
-                textedit_name.setEnabled(false);
-                textedit_age.setEnabled(false);
-                textedit_id.setEnabled(false);
-                button_save.setVisibility(View.INVISIBLE);
-                // what happens on the click event
+                }
+               else  if( (Integer.parseInt(textedit_age.getText().toString())) < (18)) {
+                    Toast.makeText(profileActivity.this, "Age 18-99", Toast.LENGTH_LONG).show();
+                }
+               else{
+
+
+
+                    sharedPreferenceHelper.saveProfileAge(age);
+                    sharedPreferenceHelper.saveProfileID(id);
+                    sharedPreferenceHelper.saveProfileName(name);
+
+                    textedit_name.setEnabled(false);
+                    textedit_age.setEnabled(false);
+                    textedit_id.setEnabled(false);
+                    button_save.setVisibility(View.INVISIBLE);
+                    // what happens on the click event
+
+                }
+
             }
         });
 
@@ -64,10 +83,12 @@ public class profileActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.user_name), Context.MODE_PRIVATE);
-        String name = sharedPreferences.getString(getString(R.string.user_name), null);
-        String age = sharedPreferences.getString(getString(R.string.user_age), null);
-        String id = sharedPreferences.getString(getString(R.string.user_id), null);
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
+
+
+        String name = sharedPreferenceHelper.getProfileName();
+        String age = sharedPreferenceHelper.getProfileAge();
+        String id = sharedPreferenceHelper.getProfileID();
         if (name != null) {
             textedit_name.setText(name);
             textedit_age.setText(age);
